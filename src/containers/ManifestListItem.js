@@ -7,6 +7,7 @@ import {
   getManifest,
   getManifestTitle, getManifestThumbnail, getManifestCanvases,
   getManifestLogo, getManifestProvider, getWindowManifests,
+  getManifestoInstance,
 } from '../state/selectors';
 import * as actions from '../state/actions';
 import { ManifestListItem } from '../components/ManifestListItem';
@@ -17,6 +18,9 @@ const mapStateToProps = (state, { manifestId, provider }) => {
   return {
     active: getWindowManifests(state).includes(manifestId),
     error: manifest.error,
+    isCollection: (
+      getManifestoInstance(state, { manifestId }) || { isCollection: () => false }
+    ).isCollection(),
     isFetching: manifest.isFetching,
     manifestLogo: getManifestLogo(state, { manifestId }),
     provider: provider
@@ -33,7 +37,11 @@ const mapStateToProps = (state, { manifestId, provider }) => {
  * @memberof ManifestListItem
  * @private
  */
-const mapDispatchToProps = { addWindow: actions.addWindow, fetchManifest: actions.fetchManifest };
+const mapDispatchToProps = {
+  addWindow: actions.addWindow,
+  fetchManifest: actions.fetchManifest,
+  showCollectionDialog: actions.showCollectionDialog,
+};
 
 /**
  *
