@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Button,
+  Chip,
   Dialog,
   DialogTitle,
   Link,
@@ -38,6 +40,13 @@ export class CollectionDialog extends Component {
   }
 
   /** */
+  constructor(props) {
+    super(props);
+
+    this.state = { filter: null };
+  }
+
+  /** */
   componentDidMount() {
     this.fetchManifestIfNeeded();
   }
@@ -66,6 +75,13 @@ export class CollectionDialog extends Component {
   }
 
   /** */
+  goToPreviousCollection() {
+    const { collectionPath, showCollectionDialog } = this.props;
+
+    showCollectionDialog(collectionPath[collectionPath.length - 1], collectionPath.slice(0, -1));
+  }
+
+  /** */
   selectManifest(m) {
     const {
       addWindow,
@@ -85,6 +101,11 @@ export class CollectionDialog extends Component {
 
     hideCollectionDialog();
     setWorkspaceAddVisibility(false);
+  }
+
+  /** */
+  setFilter(filter) {
+    this.setState({ filter });
   }
 
   /** */
@@ -111,12 +132,15 @@ export class CollectionDialog extends Component {
   render() {
     const {
       classes,
+      collectionPath,
       error,
       hideCollectionDialog,
       manifest,
       ready,
       t,
     } = this.props;
+
+    const { filter } = this.state;
 
     if (error) return null;
     if (!ready) return this.placeholder();
@@ -127,6 +151,10 @@ export class CollectionDialog extends Component {
         label: labelValuePair.getLabel(),
         value: labelValuePair.getValue(),
       }));
+
+    const collections = manifest.getCollections();
+
+    const currentFilter = filter || (collections.length > 0 ? 'collections' : 'manifests');
 
     return (
       <Dialog
@@ -142,6 +170,7 @@ export class CollectionDialog extends Component {
           </Typography>
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
+          { collectionPath.length > 0 && <Button onClick={() => this.goToPreviousCollection()}>back</Button>}
           <CollapsibleSection
             id="select-collection-about"
             label={t('aboutThisCollection')}
@@ -172,22 +201,26 @@ export class CollectionDialog extends Component {
               )
             }
           </CollapsibleSection>
-          {manifest.getTotalCollections()} collections
-          <MenuList>
-            {
-              manifest.getCollections().map(c => (
-                <MenuItem key={c.id} onClick={() => { this.selectCollection(c); }}>{CollectionDialog.getUseableLabel(c)}</MenuItem>
-              ))
-            }
-          </MenuList>
-          {manifest.getTotalManifests()} manifests
-          <MenuList>
-            {
-              manifest.getManifests().map(m => (
-                <MenuItem key={m.id} onClick={() => { this.selectManifest(m); }}>{CollectionDialog.getUseableLabel(m)}</MenuItem>
-              ))
-            }
-          </MenuList>
+          <Chip clickable color={currentFilter === 'collections' ? 'primary' : 'default'} onClick={() => this.setFilter('collections')} label={t('totalCollections', { count: manifest.getTotalCollections() })} />
+          <Chip clickable color={currentFilter === 'manifests' ? 'primary' : 'default'} onClick={() => this.setFilter('manifests')} label={t('totalManifests', { count: manifest.getTotalManifests() })} />
+          { currentFilter === 'collections' && (
+            <MenuList>
+              {
+                collections.map(c => (
+                  <MenuItem key={c.id} onClick={() => { this.selectCollection(c); }}>{CollectionDialog.getUseableLabel(c)}</MenuItem>
+                ))
+              }
+            </MenuList>
+          )}
+          { currentFilter === 'manifests' && (
+            <MenuList>
+              {
+                manifest.getManifests().map(m => (
+                  <MenuItem key={m.id} onClick={() => { this.selectManifest(m); }}>{CollectionDialog.getUseableLabel(m)}</MenuItem>
+                ))
+              }
+            </MenuList>
+          )}
         </DialogContent>
       </Dialog>
     );
