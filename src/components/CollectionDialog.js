@@ -4,6 +4,7 @@ import {
   Button,
   Chip,
   Dialog,
+  DialogActions,
   DialogTitle,
   Link,
   MenuList,
@@ -222,6 +223,11 @@ export class CollectionDialog extends Component {
             </MenuList>
           )}
         </DialogContent>
+        <DialogActions>
+          <Button onClick={hideCollectionDialog}>
+            {t('close')}
+          </Button>
+        </DialogActions>
       </Dialog>
     );
   }
