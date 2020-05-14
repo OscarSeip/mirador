@@ -70,16 +70,25 @@ export class CollectionDialog extends Component {
 
   /** */
   selectCollection(c) {
-    const { collectionPath, manifestId, showCollectionDialog } = this.props;
+    const {
+      collectionPath,
+      manifestId,
+      showCollectionDialog,
+      windowId,
+    } = this.props;
 
-    showCollectionDialog(c.id, [...collectionPath, manifestId]);
+    showCollectionDialog(c.id, [...collectionPath, manifestId], windowId);
   }
 
   /** */
   goToPreviousCollection() {
-    const { collectionPath, showCollectionDialog } = this.props;
+    const { collectionPath, showCollectionDialog, windowId } = this.props;
 
-    showCollectionDialog(collectionPath[collectionPath.length - 1], collectionPath.slice(0, -1));
+    showCollectionDialog(
+      collectionPath[collectionPath.length - 1],
+      collectionPath.slice(0, -1),
+      windowId,
+    );
   }
 
   /** */
