@@ -10,12 +10,12 @@ import {
   MenuList,
   MenuItem,
   Typography,
-  DialogContent,
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { LabelValueMetadata } from './LabelValueMetadata';
 import CollapsibleSection from '../containers/CollapsibleSection';
 import SanitizedHtml from '../containers/SanitizedHtml';
+import ScrollIndicatedDialogContent from '../containers/ScrollIndicatedDialogContent';
 
 /**
  */
@@ -121,10 +121,10 @@ export class CollectionDialog extends Component {
         <DialogTitle id="select-collection" disableTypography>
           <Skeleton className={classes.placeholder} variant="text" />
         </DialogTitle>
-        <DialogContent>
+        <ScrollIndicatedDialogContent>
           <Skeleton className={classes.placeholder} variant="text" />
           <Skeleton className={classes.placeholder} variant="text" />
-        </DialogContent>
+        </ScrollIndicatedDialogContent>
       </Dialog>
     );
   }
@@ -170,7 +170,7 @@ export class CollectionDialog extends Component {
             {CollectionDialog.getUseableLabel(manifest)}
           </Typography>
         </DialogTitle>
-        <DialogContent className={classes.dialogContent}>
+        <ScrollIndicatedDialogContent className={classes.dialogContent}>
           { collectionPath.length > 0 && <Button onClick={() => this.goToPreviousCollection()}>back</Button>}
           <CollapsibleSection
             id="select-collection-about"
@@ -202,7 +202,9 @@ export class CollectionDialog extends Component {
               )
             }
           </CollapsibleSection>
-          <Chip clickable color={currentFilter === 'collections' ? 'primary' : 'default'} onClick={() => this.setFilter('collections')} label={t('totalCollections', { count: manifest.getTotalCollections() })} />
+          {manifest.getTotalCollections() > 0 && (
+            <Chip clickable color={currentFilter === 'collections' ? 'primary' : 'default'} onClick={() => this.setFilter('collections')} label={t('totalCollections', { count: manifest.getTotalCollections() })} />
+          )}
           <Chip clickable color={currentFilter === 'manifests' ? 'primary' : 'default'} onClick={() => this.setFilter('manifests')} label={t('totalManifests', { count: manifest.getTotalManifests() })} />
           { currentFilter === 'collections' && (
             <MenuList>
@@ -222,7 +224,7 @@ export class CollectionDialog extends Component {
               }
             </MenuList>
           )}
-        </DialogContent>
+        </ScrollIndicatedDialogContent>
         <DialogActions>
           <Button onClick={hideCollectionDialog}>
             {t('close')}
