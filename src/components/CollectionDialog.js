@@ -14,8 +14,8 @@ import {
 import Skeleton from '@material-ui/lab/Skeleton';
 import { LabelValueMetadata } from './LabelValueMetadata';
 import CollapsibleSection from '../containers/CollapsibleSection';
-import SanitizedHtml from '../containers/SanitizedHtml';
 import ScrollIndicatedDialogContent from '../containers/ScrollIndicatedDialogContent';
+import ManifestInfo from '../containers/ManifestInfo';
 
 /**
  */
@@ -172,14 +172,7 @@ export class CollectionDialog extends Component {
         </DialogTitle>
         <ScrollIndicatedDialogContent className={classes.dialogContent}>
           { collectionPath.length > 0 && <Button onClick={() => this.goToPreviousCollection()}>back</Button>}
-          <CollapsibleSection
-            id="select-collection-about"
-            label={t('aboutThisCollection')}
-          >
-            <Typography variant="body1">
-              <SanitizedHtml htmlString={manifest.getDescription()} ruleSet="iiif" />
-            </Typography>
-          </CollapsibleSection>
+          <ManifestInfo manifestId={manifest.id} />
           <CollapsibleSection
             id="select-collection-rights"
             label={t('attributionTitle')}
