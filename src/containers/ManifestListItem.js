@@ -7,7 +7,7 @@ import {
   getManifest,
   getManifestTitle, getManifestThumbnail, getManifestCanvases,
   getManifestLogo, getManifestProvider, getWindowManifests,
-  getManifestoInstance,
+  getManifestoInstance, getManifestBehaviors,
 } from '../state/selectors';
 import * as actions from '../state/actions';
 import { ManifestListItem } from '../components/ManifestListItem';
@@ -15,18 +15,26 @@ import { ManifestListItem } from '../components/ManifestListItem';
 /** */
 const mapStateToProps = (state, { manifestId, provider }) => {
   const manifest = getManifest(state, { manifestId }) || {};
+  const manifesto = getManifestoInstance(state, { manifestId });
+  const isCollection = (
+    manifesto || { isCollection: () => false }
+  ).isCollection();
+
+  const size = isCollection
+    ? manifesto.getTotalItems()
+    : getManifestCanvases(state, { manifestId }).length;
   return {
     active: getWindowManifests(state).includes(manifestId),
     error: manifest.error,
-    isCollection: (
-      getManifestoInstance(state, { manifestId }) || { isCollection: () => false }
-    ).isCollection(),
+    isCollection,
     isFetching: manifest.isFetching,
+    isMultipart: isCollection
+      && getManifestBehaviors(state, { manifestId }).includes('multi-part'),
     manifestLogo: getManifestLogo(state, { manifestId }),
     provider: provider
       || getManifestProvider(state, { manifestId }),
     ready: !!manifest.json,
-    size: getManifestCanvases(state, { manifestId }).length,
+    size,
     thumbnail: getManifestThumbnail(state, { manifestId }),
     title: getManifestTitle(state, { manifestId }),
   };

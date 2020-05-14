@@ -66,6 +66,8 @@ export class ManifestListItem extends React.Component {
       provider,
       t,
       error,
+      isCollection,
+      isMultipart,
     } = this.props;
 
     const placeholder = (
@@ -123,6 +125,11 @@ export class ManifestListItem extends React.Component {
                     />
                   </Grid>
                   <Grid item xs={8} sm={9}>
+                    { isCollection && (
+                      <Typography component="div" variant="overline">
+                        { t(isMultipart ? 'multipartCollection' : 'collection') }
+                      </Typography>
+                    )}
                     <Typography component="span" variant="h6">
                       {title || manifestId}
                     </Typography>
@@ -170,6 +177,7 @@ ManifestListItem.propTypes = {
   handleClose: PropTypes.func,
   isCollection: PropTypes.bool,
   isFetching: PropTypes.bool,
+  isMultipart: PropTypes.bool,
   manifestId: PropTypes.string.isRequired,
   manifestLogo: PropTypes.string,
   provider: PropTypes.string,
@@ -188,6 +196,7 @@ ManifestListItem.defaultProps = {
   handleClose: () => {},
   isCollection: false,
   isFetching: false,
+  isMultipart: false,
   manifestLogo: null,
   provider: null,
   ready: false,
