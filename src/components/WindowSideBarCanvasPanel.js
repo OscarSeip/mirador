@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import RootRef from '@material-ui/core/RootRef';
@@ -8,6 +9,7 @@ import Select from '@material-ui/core/Select';
 import CompanionWindow from '../containers/CompanionWindow';
 import SidebarIndexList from '../containers/SidebarIndexList';
 import SidebarIndexTableOfContents from '../containers/SidebarIndexTableOfContents';
+import SidebarCollectionList from '../containers/SidebarCollectionList';
 
 /**
  * a panel showing the canvases for a given manifest
@@ -25,6 +27,15 @@ export class WindowSideBarCanvasPanel extends Component {
     this.containerRef = React.createRef();
   }
 
+  /** */
+  static getUseableLabel(resource, index) {
+    return (resource
+      && resource.getLabel
+      && resource.getLabel().length > 0)
+      ? resource.getLabel().map(label => label.value)[0]
+      : resource.id;
+  }
+
   /** @private */
   handleVariantChange(event) {
     const { updateVariant } = this.props;
@@ -39,7 +50,11 @@ export class WindowSideBarCanvasPanel extends Component {
   render() {
     const {
       classes,
+      collection,
+      collectionPath,
       id,
+      setShowMultipart,
+      showMultipart,
       t,
       toggleDraggingEnabled,
       variant,
@@ -48,7 +63,16 @@ export class WindowSideBarCanvasPanel extends Component {
 
     const { variantSelectionOpened } = this.state;
     let listComponent;
-    if (variant === 'tableOfContents') {
+
+    if (showMultipart) {
+      listComponent = (
+        <SidebarCollectionList
+          id={id}
+          containerRef={this.containerRef}
+          windowId={windowId}
+        />
+      );
+    } else if (variant === 'tableOfContents') {
       listComponent = (
         <SidebarIndexTableOfContents
           id={id}
@@ -104,6 +128,9 @@ export class WindowSideBarCanvasPanel extends Component {
             </FormControl>
           )}
         >
+          { !showMultipart && collectionPath.length > 0 && (
+            <Button onClick={() => setShowMultipart(collectionPath)}>{WindowSideBarCanvasPanel.getUseableLabel(collection)}</Button>
+          )}
           {listComponent}
         </CompanionWindow>
       </RootRef>
@@ -113,10 +140,20 @@ export class WindowSideBarCanvasPanel extends Component {
 
 WindowSideBarCanvasPanel.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
+  collection: PropTypes.object,
+  collectionPath: PropTypes.arrayOf(PropTypes.string),
   id: PropTypes.string.isRequired,
+  setShowMultipart: PropTypes.func.isRequired,
+  showMultipart: PropTypes.bool,
   t: PropTypes.func.isRequired,
   toggleDraggingEnabled: PropTypes.func.isRequired,
   updateVariant: PropTypes.func.isRequired,
   variant: PropTypes.oneOf(['item', 'thumbnail', 'tableOfContents']).isRequired,
   windowId: PropTypes.string.isRequired,
+};
+
+WindowSideBarCanvasPanel.defaultProps = {
+  collection: null,
+  collectionPath: [],
+  showMultipart: false,
 };

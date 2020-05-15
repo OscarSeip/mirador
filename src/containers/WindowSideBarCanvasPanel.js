@@ -10,19 +10,28 @@ import {
   getDefaultSidebarVariant,
   getManifestCanvases,
   getVisibleCanvases,
+  getWindow,
+  getManifestoInstance,
 } from '../state/selectors';
 
 /**
  * mapStateToProps - to hook up connect
  */
 const mapStateToProps = (state, { id, windowId }) => {
+  const window = getWindow(state, { windowId });
   const canvases = getManifestCanvases(state, { windowId });
   const { config } = state;
+  const companionWindow = getCompanionWindow(state, { companionWindowId: id });
+  const collectionPath = window.collectionPath || [];
+  const collectionId = collectionPath && collectionPath[collectionPath.length - 1];
   return {
     canvases,
+    collection: collectionId && getManifestoInstance(state, { manifestId: collectionId }),
+    collectionPath,
     config,
     selectedCanvases: getVisibleCanvases(state, { windowId }),
-    variant: getCompanionWindow(state, { companionWindowId: id, windowId }).variant
+    showMultipart: companionWindow.multipart,
+    variant: companionWindow.variant
       || getDefaultSidebarVariant(state, { windowId }),
   };
 };
@@ -34,6 +43,9 @@ const mapStateToProps = (state, { id, windowId }) => {
  */
 const mapDispatchToProps = (dispatch, { id, windowId }) => ({
   setCanvas: (...args) => dispatch(actions.setCanvas(...args)),
+  setShowMultipart: collectionPath => dispatch(
+    actions.updateCompanionWindow(windowId, id, { collectionPath, multipart: true }),
+  ),
   toggleDraggingEnabled: () => dispatch(actions.toggleDraggingEnabled()),
   updateVariant: variant => dispatch(
     actions.updateCompanionWindow(windowId, id, { variant }),
