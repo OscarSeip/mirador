@@ -11,6 +11,7 @@ import {
   MenuItem,
   Typography,
 } from '@material-ui/core';
+import ArrowBackIcon from '@material-ui/icons/ArrowBackSharp';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { LabelValueMetadata } from './LabelValueMetadata';
 import CollapsibleSection from '../containers/CollapsibleSection';
@@ -142,9 +143,11 @@ export class CollectionDialog extends Component {
   render() {
     const {
       classes,
+      collection,
       collectionPath,
       error,
       hideCollectionDialog,
+      isMultipart,
       manifest,
       ready,
       t,
@@ -172,42 +175,56 @@ export class CollectionDialog extends Component {
         open
       >
         <DialogTitle id="select-collection" disableTypography>
-          <Typography variant="h2">
-            {t('selectCollection')}
+          <Typography component="div" variant="overline">
+            { t(isMultipart ? 'multipartCollection' : 'collection') }
           </Typography>
           <Typography variant="h3">
             {CollectionDialog.getUseableLabel(manifest)}
           </Typography>
         </DialogTitle>
         <ScrollIndicatedDialogContent className={classes.dialogContent}>
-          { collectionPath.length > 0 && <Button onClick={() => this.goToPreviousCollection()}>back</Button>}
-          <ManifestInfo manifestId={manifest.id} />
-          <CollapsibleSection
-            id="select-collection-rights"
-            label={t('attributionTitle')}
-          >
-            { requiredStatement && (
-              <LabelValueMetadata labelValuePairs={requiredStatement} defaultLabel={t('attribution')} />
-            )}
-            {
-              rights && rights.length > 0 && (
-                <>
-                  <Typography variant="subtitle2" component="dt">{t('rights')}</Typography>
-                  { rights.map(v => (
-                    <Typography variant="body1" component="dd">
-                      <Link target="_blank" rel="noopener noreferrer" href={v}>
-                        {v}
-                      </Link>
-                    </Typography>
-                  )) }
-                </>
-              )
-            }
-          </CollapsibleSection>
-          {manifest.getTotalCollections() > 0 && (
-            <Chip clickable color={currentFilter === 'collections' ? 'primary' : 'default'} onClick={() => this.setFilter('collections')} label={t('totalCollections', { count: manifest.getTotalCollections() })} />
+          { collection && (
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={() => this.goToPreviousCollection()}
+            >
+              {CollectionDialog.getUseableLabel(collection)}
+            </Button>
           )}
-          <Chip clickable color={currentFilter === 'manifests' ? 'primary' : 'default'} onClick={() => this.setFilter('manifests')} label={t('totalManifests', { count: manifest.getTotalManifests() })} />
+
+          <div className={classes.collectionMetadata}>
+            <ManifestInfo manifestId={manifest.id} />
+            <CollapsibleSection
+              id="select-collection-rights"
+              label={t('attributionTitle')}
+            >
+              { requiredStatement && (
+                <LabelValueMetadata labelValuePairs={requiredStatement} defaultLabel={t('attribution')} />
+              )}
+              {
+                rights && rights.length > 0 && (
+                  <>
+                    <Typography variant="subtitle2" component="dt">{t('rights')}</Typography>
+                    { rights.map(v => (
+                      <Typography variant="body1" component="dd">
+                        <Link target="_blank" rel="noopener noreferrer" href={v}>
+                          {v}
+                        </Link>
+                      </Typography>
+                    )) }
+                  </>
+                )
+              }
+            </CollapsibleSection>
+          </div>
+          <div className={classes.collectionFilter}>
+            {manifest.getTotalCollections() > 0 && (
+              <Chip clickable color={currentFilter === 'collections' ? 'primary' : 'default'} onClick={() => this.setFilter('collections')} label={t('totalCollections', { count: manifest.getTotalCollections() })} />
+            )}
+            {manifest.getTotalManifests() > 0 && (
+              <Chip clickable color={currentFilter === 'manifests' ? 'primary' : 'default'} onClick={() => this.setFilter('manifests')} label={t('totalManifests', { count: manifest.getTotalManifests() })} />
+            )}
+          </div>
           { currentFilter === 'collections' && (
             <MenuList>
               {
@@ -240,11 +257,13 @@ export class CollectionDialog extends Component {
 CollectionDialog.propTypes = {
   addWindow: PropTypes.func.isRequired,
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
+  collection: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   collectionPath: PropTypes.arrayOf(PropTypes.string),
   error: PropTypes.string,
   fetchManifest: PropTypes.func.isRequired,
   hideCollectionDialog: PropTypes.func.isRequired,
   isFetching: PropTypes.bool,
+  isMultipart: PropTypes.bool,
   manifest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   manifestId: PropTypes.string.isRequired,
   ready: PropTypes.bool,
@@ -256,9 +275,11 @@ CollectionDialog.propTypes = {
 };
 
 CollectionDialog.defaultProps = {
+  collection: null,
   collectionPath: [],
   error: null,
   isFetching: false,
+  isMultipart: false,
   ready: false,
   windowId: null,
 };

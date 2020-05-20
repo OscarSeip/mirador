@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import ViewListIcon from '@material-ui/icons/ViewListSharp';
 import CollapsibleSection from '../containers/CollapsibleSection';
 
 
@@ -54,8 +55,12 @@ export class CollectionInfo extends Component {
           </Typography>
         )}
 
-        <Button onClick={this.openCollectionDialog}>
-          {t('viewCollection')}
+        <Button
+          color="primary"
+          onClick={this.openCollectionDialog}
+          startIcon={<ViewListIcon />}
+        >
+          {t('showCollection')}
         </Button>
       </CollapsibleSection>
     );

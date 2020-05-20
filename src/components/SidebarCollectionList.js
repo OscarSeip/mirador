@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
+import ArrowBackIcon from '@material-ui/icons/ArrowBackSharp';
+import IIIFThumbnail from '../containers/IIIFThumbnail';
 
 /** */
 export class SidebarCollectionList extends Component {
@@ -50,6 +53,7 @@ export class SidebarCollectionList extends Component {
   /** */
   render() {
     const {
+      canvasNavigation,
       classes,
       collectionPath,
       collection,
@@ -58,6 +62,7 @@ export class SidebarCollectionList extends Component {
       updateCompanionWindow,
       updateWindow,
       t,
+      variant,
     } = this.props;
 
     if (!collection) return <></>;
@@ -66,75 +71,103 @@ export class SidebarCollectionList extends Component {
     const manifests = collection.getManifests();
 
     return (
-      <>
-        <div>
-          <Typography component="div" variant="overline">
-            { t(this.isMultipart() ? 'multipartCollection' : 'collection') }
-          </Typography>
-          <Typography component="span" variant="h6">
-            {SidebarCollectionList.getUseableLabel(collection)}
-          </Typography>
-        </div>
+      <List>
         { parentCollection && (
-          <Button onClick={() => updateCompanionWindow({ collectionPath: collectionPath.slice(0, -1) })}>
-            {SidebarCollectionList.getUseableLabel(parentCollection)}
-          </Button>
+          <ListItem
+            button
+            onClick={() => updateCompanionWindow({ collectionPath: collectionPath.slice(0, -1) })}
+          >
+            <ListItemIcon>
+              <ArrowBackIcon />
+            </ListItemIcon>
+            <ListItemText primaryTypographyProps={{ variant: 'body1' }}>
+              {SidebarCollectionList.getUseableLabel(parentCollection)}
+            </ListItemText>
+          </ListItem>
         )}
-        <List>
-          {
-            collections.map((manifest) => {
-              /** select the new manifest and go back to the normal index */
-              const onClick = () => {
-                // close collection
-                updateCompanionWindow({ collectionPath: [...collectionPath, manifest.id] });
-              };
+        <ListItem>
+          <ListItemText primaryTypographyProps={{ variant: 'h6' }}>
+            <Typography component="div" variant="overline">
+              { t(this.isMultipart() ? 'multipartCollection' : 'collection') }
+            </Typography>
+            {SidebarCollectionList.getUseableLabel(collection)}
+          </ListItemText>
+        </ListItem>
+        {
+          collections.map((manifest) => {
+            /** select the new manifest and go back to the normal index */
+            const onClick = () => {
+              // close collection
+              updateCompanionWindow({ collectionPath: [...collectionPath, manifest.id] });
+            };
 
-              return (
-                <ListItem
-                  key={manifest.id}
-                  className={classes.listItem}
-                  alignItems="flex-start"
-                  onClick={onClick}
-                  button
-                  component="li"
-                >
-                  {SidebarCollectionList.getUseableLabel(manifest)}
-                </ListItem>
-              );
-            })
-          }
-          {
-            manifests.map((manifest) => {
-              /** select the new manifest and go back to the normal index */
-              const onClick = () => {
-                // select new manifest
-                updateWindow({ collectionPath, manifestId: manifest.id });
-                // close collection
-                updateCompanionWindow({ multipart: false });
-              };
+            return (
+              <ListItem
+                key={manifest.id}
+                className={classes.listItem}
+                alignItems="flex-start"
+                onClick={onClick}
+                button
+                component="li"
+              >
+                { variant === 'thumbnail' && (
+                  <ListItemIcon>
+                    <IIIFThumbnail
+                      resource={manifest}
+                      maxHeight={canvasNavigation.height}
+                      maxWidth={canvasNavigation.width}
+                    />
+                  </ListItemIcon>
+                )}
+                <ListItemText>{SidebarCollectionList.getUseableLabel(manifest)}</ListItemText>
+              </ListItem>
+            );
+          })
+        }
+        {
+          manifests.map((manifest) => {
+            /** select the new manifest and go back to the normal index */
+            const onClick = () => {
+              // select new manifest
+              updateWindow({ collectionPath, manifestId: manifest.id });
+              // close collection
+              updateCompanionWindow({ multipart: false });
+            };
 
-              return (
-                <ListItem
-                  key={manifest.id}
-                  className={classes.listItem}
-                  alignItems="flex-start"
-                  onClick={onClick}
-                  button
-                  component="li"
-                  selected={manifestId === manifest.id}
-                >
-                  {SidebarCollectionList.getUseableLabel(manifest)}
-                </ListItem>
-              );
-            })
-          }
-        </List>
-      </>
+            return (
+              <ListItem
+                key={manifest.id}
+                className={classes.listItem}
+                alignItems="flex-start"
+                onClick={onClick}
+                button
+                component="li"
+                selected={manifestId === manifest.id}
+              >
+                { variant === 'thumbnail' && (
+                  <ListItemIcon>
+                    <IIIFThumbnail
+                      resource={manifest}
+                      maxHeight={canvasNavigation.height}
+                      maxWidth={canvasNavigation.width}
+                    />
+                  </ListItemIcon>
+                )}
+                <ListItemText>{SidebarCollectionList.getUseableLabel(manifest)}</ListItemText>
+              </ListItem>
+            );
+          })
+        }
+      </List>
     );
   }
 }
 
 SidebarCollectionList.propTypes = {
+  canvasNavigation: PropTypes.shape({
+    height: PropTypes.number,
+    width: PropTypes.number,
+  }).isRequired,
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
   collection: PropTypes.object,
   collectionId: PropTypes.string.isRequired,
@@ -148,6 +181,7 @@ SidebarCollectionList.propTypes = {
   t: PropTypes.func,
   updateCompanionWindow: PropTypes.func.isRequired,
   updateWindow: PropTypes.func.isRequired,
+  variant: PropTypes.string,
 };
 
 SidebarCollectionList.defaultProps = {
@@ -157,4 +191,5 @@ SidebarCollectionList.defaultProps = {
   isFetching: false,
   ready: false,
   t: k => k,
+  variant: null,
 };

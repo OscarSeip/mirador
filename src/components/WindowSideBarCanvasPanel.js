@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import RootRef from '@material-ui/core/RootRef';
 import Select from '@material-ui/core/Select';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CompanionWindow from '../containers/CompanionWindow';
 import SidebarIndexList from '../containers/SidebarIndexList';
 import SidebarIndexTableOfContents from '../containers/SidebarIndexTableOfContents';
@@ -129,7 +132,14 @@ export class WindowSideBarCanvasPanel extends Component {
           )}
         >
           { !showMultipart && collectionPath.length > 0 && (
-            <Button onClick={() => setShowMultipart(collectionPath)}>{WindowSideBarCanvasPanel.getUseableLabel(collection)}</Button>
+            <ListItem button onClick={() => setShowMultipart(collectionPath)}>
+              <ListItemIcon>
+                <ArrowBackIcon />
+              </ListItemIcon>
+              <ListItemText primaryTypographyProps={{ variant: 'body1' }}>
+                {WindowSideBarCanvasPanel.getUseableLabel(collection)}
+              </ListItemText>
+            </ListItem>
           )}
           {listComponent}
         </CompanionWindow>

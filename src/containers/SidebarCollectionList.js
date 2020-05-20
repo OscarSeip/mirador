@@ -8,6 +8,7 @@ import {
   getCompanionWindow,
   getManifest,
   getManifestoInstance,
+  getDefaultSidebarVariant,
 } from '../state/selectors';
 import { SidebarCollectionList } from '../components/SidebarCollectionList';
 
@@ -24,6 +25,7 @@ const mapStateToProps = (state, { id, windowId }) => {
   const manifest = getManifest(state, { windowId });
 
   return {
+    canvasNavigation: state.config.canvasNavigation,
     collection: collection && getManifestoInstance(state, { manifestId: collection.id }),
     collectionId,
     collectionPath,
@@ -32,6 +34,8 @@ const mapStateToProps = (state, { id, windowId }) => {
     manifestId: manifest && manifest.id,
     parentCollection: parentCollection && getManifestoInstance(state, { manifestId: parentCollection.id }),
     ready: collection && !!collection.json,
+    variant: companionWindow.variant
+      || getDefaultSidebarVariant(state, { windowId }),
   };
 };
 
