@@ -37,7 +37,7 @@ export class SidebarCollectionList extends Component {
       error, fetchManifest, isFetching, collectionId, ready,
     } = this.props;
 
-    if (!ready && !error && !isFetching) fetchManifest(collectionId, { hide: true });
+    if (!ready && !error && !isFetching) fetchManifest(collectionId);
   }
 
   isMultipart() {

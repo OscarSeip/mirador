@@ -66,7 +66,7 @@ export class CollectionDialog extends Component {
       error, fetchManifest, isFetching, manifestId, ready,
     } = this.props;
 
-    if (!ready && !error && !isFetching) fetchManifest(manifestId, { hide: true });
+    if (!ready && !error && !isFetching) fetchManifest(manifestId);
   }
 
   /** */
