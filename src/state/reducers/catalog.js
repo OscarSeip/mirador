@@ -13,11 +13,17 @@ export const catalogReducer = (state = [], action) => {
         ...state,
       ];
     case ActionTypes.ADD_WINDOW:
-    case ActionTypes.UPDATE_WINDOW:
       if (state.some(m => m.manifestId === action.window.manifestId)) return state;
 
       return [
         { manifestId: action.window.manifestId },
+        ...state,
+      ];
+    case ActionTypes.UPDATE_WINDOW:
+      if (state.some(m => m.manifestId === action.payload.manifestId)) return state;
+
+      return [
+        { manifestId: action.payload.manifestId },
         ...state,
       ];
     case ActionTypes.REMOVE_RESOURCE:
