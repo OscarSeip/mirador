@@ -20,6 +20,7 @@ export const catalogReducer = (state = [], action) => {
         ...state,
       ];
     case ActionTypes.UPDATE_WINDOW:
+      if (!action.payload.manifestId) return state;
       if (state.some(m => m.manifestId === action.payload.manifestId)) return state;
 
       return [

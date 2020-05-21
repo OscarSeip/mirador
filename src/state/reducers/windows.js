@@ -58,7 +58,14 @@ export const windowsReducer = (state = {}, action) => {
       };
 
     case ActionTypes.UPDATE_WINDOW:
-      return updateIn(state, [action.id], orig => merge(orig, action.payload));
+      return {
+        ...state,
+        [action.id]: {
+          ...state[action.id],
+          ...action.payload,
+          canvasId: null,
+        },
+      };
 
     case ActionTypes.REMOVE_WINDOW:
       return Object.keys(state).reduce((object, key) => {
