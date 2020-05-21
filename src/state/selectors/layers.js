@@ -65,7 +65,7 @@ export const getLayersForVisibleCanvases = createSelector(
     (state, { windowId }) => (canvasId => getLayers(state, { canvasId, windowId })),
   ],
   (canvases, getLayersForCanvas) => (
-    canvases.reduce((acc, canvas) => {
+    (canvases || []).reduce((acc, canvas) => {
       acc[canvas.id] = getLayersForCanvas(canvas.id);
       return acc;
     }, {})

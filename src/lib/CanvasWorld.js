@@ -10,7 +10,7 @@ export default class CanvasWorld {
    * world from.
    */
   constructor(canvases, layers, viewingDirection = 'left-to-right') {
-    this.canvases = canvases.map(c => new MiradorCanvas(c));
+    this.canvases = (canvases || []).map(c => new MiradorCanvas(c));
     this.layers = layers;
     this.viewingDirection = viewingDirection;
     this._canvasDimensions = null; // eslint-disable-line no-underscore-dangle
