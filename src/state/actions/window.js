@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { fetchManifest } from './manifest';
 import ActionTypes from './action-types';
 
 /**
@@ -39,8 +40,20 @@ export function focusWindow(windowId, pan = false) {
  */
 export function addWindow({ companionWindows, ...options }) {
   return (dispatch, getState) => {
-    const { config, windows } = getState();
+    const { config, manifests, windows } = getState();
     const numWindows = Object.keys(windows).length;
+
+    if (!options.autoloadManifests) {
+      if (options.manifestId && !manifests[options.manifestId]) {
+        dispatch(fetchManifest(options.manifestId));
+      }
+
+      if (options.collectionPath) {
+        options.collectionPath.forEach(manifestId => (
+          manifests[manifestId] || dispatch(fetchManifest(manifestId))
+        ));
+      }
+    }
 
     const cwThumbs = `cw-${uuid()}`;
 
