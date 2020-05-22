@@ -59,10 +59,10 @@ describe('getVisibleCanvases', () => {
     ]);
   });
 
-  it('should return undefined when there is no manifestation to get a canvas from', () => {
+  it('should return an empty array when there is no manifestation to get a canvas from', () => {
     const selectedCanvas = getVisibleCanvases(noManifestationState, { windowId: 'a' });
 
-    expect(selectedCanvas).toBeUndefined();
+    expect(selectedCanvas).toEqual([]);
   });
 });
 

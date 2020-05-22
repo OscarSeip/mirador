@@ -63,7 +63,6 @@ export const windowsReducer = (state = {}, action) => {
         [action.id]: {
           ...state[action.id],
           ...action.payload,
-          canvasId: null,
         },
       };
 

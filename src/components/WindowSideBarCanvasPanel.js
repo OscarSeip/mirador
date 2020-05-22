@@ -150,7 +150,7 @@ export class WindowSideBarCanvasPanel extends Component {
 
 WindowSideBarCanvasPanel.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  collection: PropTypes.object,
+  collection: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   collectionPath: PropTypes.arrayOf(PropTypes.string),
   id: PropTypes.string.isRequired,
   setShowMultipart: PropTypes.func.isRequired,

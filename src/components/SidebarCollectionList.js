@@ -40,6 +40,7 @@ export class SidebarCollectionList extends Component {
     if (!ready && !error && !isFetching) fetchManifest(collectionId);
   }
 
+  /** */
   isMultipart() {
     const { collection } = this.props;
 
@@ -129,7 +130,7 @@ export class SidebarCollectionList extends Component {
             /** select the new manifest and go back to the normal index */
             const onClick = () => {
               // select new manifest
-              updateWindow({ collectionPath, manifestId: manifest.id });
+              updateWindow({ canvasId: null, collectionPath, manifestId: manifest.id });
               // close collection
               updateCompanionWindow({ multipart: false });
             };
@@ -169,14 +170,14 @@ SidebarCollectionList.propTypes = {
     width: PropTypes.number,
   }).isRequired,
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  collection: PropTypes.object,
+  collection: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   collectionId: PropTypes.string.isRequired,
   collectionPath: PropTypes.arrayOf(PropTypes.string),
   error: PropTypes.string,
   fetchManifest: PropTypes.func.isRequired,
   isFetching: PropTypes.bool,
   manifestId: PropTypes.string.isRequired,
-  parentCollection: PropTypes.object,
+  parentCollection: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   ready: PropTypes.bool,
   t: PropTypes.func,
   updateCompanionWindow: PropTypes.func.isRequired,
@@ -189,6 +190,7 @@ SidebarCollectionList.defaultProps = {
   collectionPath: [],
   error: null,
   isFetching: false,
+  parentCollection: null,
   ready: false,
   t: k => k,
   variant: null,

@@ -61,6 +61,11 @@ export class CollectionDialog extends Component {
   }
 
   /** */
+  setFilter(filter) {
+    this.setState({ filter });
+  }
+
+  /** */
   fetchManifestIfNeeded() {
     const {
       error, fetchManifest, isFetching, manifestId, ready,
@@ -105,18 +110,15 @@ export class CollectionDialog extends Component {
     } = this.props;
 
     if (windowId) {
-      updateWindow(windowId, { collectionPath: [...collectionPath, manifestId], manifestId: m.id });
+      updateWindow(windowId, {
+        canvasId: null, collectionPath: [...collectionPath, manifestId], manifestId: m.id,
+      });
     } else {
       addWindow({ collectionPath: [...collectionPath, manifestId], manifestId: m.id });
     }
 
     hideCollectionDialog();
     setWorkspaceAddVisibility(false);
-  }
-
-  /** */
-  setFilter(filter) {
-    this.setState({ filter });
   }
 
   /** */
@@ -144,7 +146,6 @@ export class CollectionDialog extends Component {
     const {
       classes,
       collection,
-      collectionPath,
       error,
       hideCollectionDialog,
       isMultipart,
@@ -229,7 +230,9 @@ export class CollectionDialog extends Component {
             <MenuList>
               {
                 collections.map(c => (
-                  <MenuItem key={c.id} onClick={() => { this.selectCollection(c); }}>{CollectionDialog.getUseableLabel(c)}</MenuItem>
+                  <MenuItem key={c.id} onClick={() => { this.selectCollection(c); }}>
+                    {CollectionDialog.getUseableLabel(c)}
+                  </MenuItem>
                 ))
               }
             </MenuList>
@@ -238,7 +241,9 @@ export class CollectionDialog extends Component {
             <MenuList>
               {
                 manifest.getManifests().map(m => (
-                  <MenuItem key={m.id} onClick={() => { this.selectManifest(m); }}>{CollectionDialog.getUseableLabel(m)}</MenuItem>
+                  <MenuItem key={m.id} onClick={() => { this.selectManifest(m); }}>
+                    {CollectionDialog.getUseableLabel(m)}
+                  </MenuItem>
                 ))
               }
             </MenuList>
